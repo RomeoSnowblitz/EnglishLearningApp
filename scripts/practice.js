@@ -33,7 +33,7 @@ function renderCard(){
   <button onclick="reveal()">${t.reveal}</button>`;
 }
 function playWord(){
- state.audio.src=resolveAssetUrl(state.practice.current.soundFile);
+ state.audio.src=state.practice.current.soundFile;
  state.audio.play();
 }
 function reveal(){

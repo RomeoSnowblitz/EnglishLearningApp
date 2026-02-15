@@ -63,7 +63,7 @@ function autoReadNext() {
     state.audio.onended = advance;
     state.audio.onerror = advance;
     if (typeof applyAudioVolume === "function") applyAudioVolume(w.volume != null ? w.volume : 0);
-    state.audio.src = typeof resolveAssetUrl === "function" ? resolveAssetUrl(w.soundFile) : w.soundFile;
+    state.audio.src = w.soundFile;
     var p = state.audio.play();
     if (p && typeof p.catch === "function") p.catch(function() { if (!didAdvance) advance(); });
   } else {
@@ -276,8 +276,7 @@ function buildAudioExistsCache(onReady) {
     }
     var pending = batch.length;
     batch.forEach(function(path) {
-      var url = typeof resolveAssetUrl === "function" ? resolveAssetUrl(path) : path;
-      fetch(url, { method: "GET" }).then(function(r) {
+      fetch(path, { method: "GET" }).then(function(r) {
         _audioExistsCache[path] = r.ok;
       }).catch(function() {
         _audioExistsCache[path] = false;
