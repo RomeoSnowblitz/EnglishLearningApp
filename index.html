@@ -6,6 +6,10 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="fileProtocolNotice" style="display:none;position:sticky;top:0;z-index:9999;background:#f0ad4e;color:#000;padding:8px 12px;font-size:14px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.2)">
+  <span id="fileProtocolNoticeText"></span>
+  <button onclick="document.getElementById('fileProtocolNotice').style.display='none'" style="margin-left:8px;cursor:pointer">Dismiss</button>
+</div>
 <header>
   <div id="title"></div>
   <button onclick="openSettings()">⚙️</button>
@@ -130,6 +134,10 @@
 <script src="scripts/faq.js"></script>
 <script src="scripts/practice.js"></script>
 <script src="scripts/state.js"></script>
+<script>
+// Resolve audio paths relative to the current page (fixes audio when opened via file:// or from GitHub Pages).
+function resolveAssetUrl(path) { if (!path) return path; try { return new URL(path, window.location.href).href; } catch (e) { return path; } }
+</script>
 <script src="scripts/stories.js"></script>
 <script src="scripts/translations.js"></script>
 <script src="scripts/words.js"></script>
@@ -162,6 +170,14 @@
 
 <script>
 /* ================= UTIL ================= */
+if (window.location.protocol === "file:") {
+  var fileNotice = document.getElementById("fileProtocolNotice");
+  var fileNoticeText = document.getElementById("fileProtocolNoticeText");
+  if (fileNotice && fileNoticeText) {
+    fileNoticeText.textContent = "Audio may not work when opening the file directly. For sound, run a local server (e.g. \"npx serve\" in this folder) and open the URL in your browser.";
+    fileNotice.style.display = "block";
+  }
+}
 const $=id=>document.getElementById(id);
 function showScreen(id){
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -196,7 +212,7 @@ function applyAudioVolume(volumeDb) {
     state.audioGainNode.gain.value = Math.pow(10, db / 20);
   }
 }
-function playSound(f, volumeDb){ applyAudioVolume(volumeDb != null ? volumeDb : 0); state.audio.src=f; state.audio.play(); }
+function playSound(f, volumeDb){ applyAudioVolume(volumeDb != null ? volumeDb : 0); state.audio.src=resolveAssetUrl(f); state.audio.play(); }
 function openInfo(html){
   const modal = $("infoModal");
   if (modal.style.display === "flex") {
